@@ -6,6 +6,7 @@ import net.conriot.sona.permissions.Permissions;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 
 class Region {
 	private HashSet<String> pvp;
@@ -15,7 +16,7 @@ class Region {
 	private HashSet<String> destroy;
 	private HashSet<String> use;
 	private HashSet<String> command;
-	private HashSet<Material> whitelist;
+	private HashSet<MaterialData> whitelist;
 	
 	public Region() {
 		// Initialize all sets
@@ -26,7 +27,7 @@ class Region {
 		this.destroy = new HashSet<String>();
 		this.use = new HashSet<String>();
 		this.command = new HashSet<String>();
-		this.whitelist = new HashSet<Material>();
+		this.whitelist = new HashSet<MaterialData>();
 	}
 	
 	public void addPvpPerm(String perm) {
@@ -57,7 +58,7 @@ class Region {
 		this.command.add(perm);
 	}
 	
-	public void addWhitelistItem(Material mat) {
+	public void addWhitelistItem(MaterialData mat) {
 		this.whitelist.add(mat);
 	}
 	
