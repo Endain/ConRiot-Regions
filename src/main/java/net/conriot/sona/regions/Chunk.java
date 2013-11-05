@@ -3,7 +3,7 @@ package net.conriot.sona.regions;
 import lombok.Getter;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
@@ -25,87 +25,275 @@ class Chunk implements IOCallback {
 		this.regions = new Region[16][16][16]; // x,z,y
 	}
 	
-	public void addPvpPerm(String perm) {
+	public void addPvpPerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			this.regions[innerX][innerZ][innerY] = new Region();
+		
+		this.regions[innerX][innerZ][innerY].addPvpPerm(perm);
+		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "pvp", perm);
 	}
 	
-	public void addMovePerm(String perm) {
+	public void addMovePerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			this.regions[innerX][innerZ][innerY] = new Region();
+		
+		this.regions[innerX][innerZ][innerY].addMovePerm(perm);
+		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "move", perm);
 	}
 	
-	public void addChatPerm(String perm) {
+	public void addChatPerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			this.regions[innerX][innerZ][innerY] = new Region();
+		
+		this.regions[innerX][innerZ][innerY].addChatPerm(perm);
+		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "chat", perm);
 	}
 	
-	public void addBuildPerm(String perm) {
+	public void addBuildPerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			this.regions[innerX][innerZ][innerY] = new Region();
+		
+		this.regions[innerX][innerZ][innerY].addBuildPerm(perm);
+		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "build", perm);
 	}
 	
-	public void addDestroyPerm(String perm) {
+	public void addDestroyPerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			this.regions[innerX][innerZ][innerY] = new Region();
+		
+		this.regions[innerX][innerZ][innerY].addDestroyPerm(perm);
+		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "destroy", perm);
 	}
 	
-	public void addUsePerm(String perm) {
+	public void addUsePerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			this.regions[innerX][innerZ][innerY] = new Region();
+		
+		this.regions[innerX][innerZ][innerY].addUsePerm(perm);
+		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "use", perm);
 	}
 	
-	public void addCommandPerm(String perm) {
+	public void addCommandPerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			this.regions[innerX][innerZ][innerY] = new Region();
+		
+		this.regions[innerX][innerZ][innerY].addCommandPerm(perm);
+		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "command", perm);
 	}
 	
-	public void addWhitelistItem(MaterialData mat) {
+	@SuppressWarnings("deprecation")
+	public void addWhitelistItem(Location loc, MaterialData mat) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			this.regions[innerX][innerZ][innerY] = new Region();
+		
+		this.regions[innerX][innerZ][innerY].addWhitelistItem(mat);
+		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "whitelist", mat.getItemTypeId() + ":" + mat.getData());
 	}
 	
-	public void removePvpPerm(String perm) {
+	public void removePvpPerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			return;
+		
+		this.regions[innerX][innerZ][innerY].removePvpPerm(perm);
+		remove(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "command", perm);
 	}
 	
-	public void removeMovePerm(String perm) {
+	public void removeMovePerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			return;
+		
+		this.regions[innerX][innerZ][innerY].removeMovePerm(perm);
+		remove(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "move", perm);
 	}
 	
-	public void removeChatPerm(String perm) {
+	public void removeChatPerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			return;
+		
+		this.regions[innerX][innerZ][innerY].removeChatPerm(perm);
+		remove(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "chat", perm);
 	}
 	
-	public void removeBuildPerm(String perm) {
+	public void removeBuildPerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			return;
+		
+		this.regions[innerX][innerZ][innerY].removeBuildPerm(perm);
+		remove(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "build", perm);
 	}
 	
-	public void removeDestroyPerm(String perm) {
+	public void removeDestroyPerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			return;
+		
+		this.regions[innerX][innerZ][innerY].removeDestroyPerm(perm);
+		remove(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "destroy", perm);
 	}
 	
-	public void removeUsePerm(String perm) {
+	public void removeUsePerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			return;
+		
+		this.regions[innerX][innerZ][innerY].removeUsePerm(perm);
+		remove(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "use", perm);
 	}
 	
-	public void removeCommandPerm(String perm) {
+	public void removeCommandPerm(Location loc, String perm) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			return;
+		
+		this.regions[innerX][innerZ][innerY].removeCommandPerm(perm);
+		remove(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "command", perm);
 	}
 	
-	public void removeWhitelistItem(Material mat) {
+	@SuppressWarnings("deprecation")
+	public void removeWhitelistItem(Location loc, MaterialData mat) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		if(this.regions[innerX][innerZ][innerY] == null)
+			return;
+		
+		this.regions[innerX][innerZ][innerY].removeWhitelistItem(mat);
+		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "whitelist", mat.getItemTypeId() + ":" + mat.getData());
 	}
 	
-	public boolean canPvp(Player p) {
+	public boolean canPvp(Location loc, Player p) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		return this.regions[innerX][innerZ][innerY].canPvp(p);
 	}
 	
-	public boolean canMove(Player p) {
+	public boolean canMove(Location loc, Player p) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		return this.regions[innerX][innerZ][innerY].canMove(p);
 	}
 	
-	public boolean canChat(Player p) {
+	public boolean canChat(Location loc, Player p) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		return this.regions[innerX][innerZ][innerY].canChat(p);
 	}
 	
-	public boolean canBuild(Player p) {
+	public boolean canBuild(Location loc, Player p) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		return this.regions[innerX][innerZ][innerY].canBuild(p);
 	}
 	
-	public boolean CanDestroy(Player p, Material m) {
+	public boolean CanDestroy(Location loc, Player p, MaterialData m) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		return this.regions[innerX][innerZ][innerY].canDestroy(p, m);
 	}
 	
-	public boolean canUse(Player p) {
+	public boolean canUse(Location loc, Player p) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		return this.regions[innerX][innerZ][innerY].canUse(p);
 	}
 	
-	public boolean canCommand(Player p) {
+	public boolean canCommand(Location loc, Player p) {
+		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
+		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
+		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		return this.regions[innerX][innerZ][innerY].canCommand(p);
 	}
 	
 	public void add(int x, int y, int z, String type, String entry) {
 		// Create a query to add an entry for a region
 		Query q = MySQL.makeQuery();
-		q.setQuery("INSERT INTO regions (x,y,z,type,permission) VALUES ?,?,?,?,?");
-		//q.add();
+		q.setQuery("INSERT IGNORE INTO regions (x,y,z,type,permission) VALUES ?,?,?,?,?");
+		q.add(x);
+		q.add(y);
+		q.add(z);
+		q.add(type);
+		q.add(entry);
 		
 		// Execute query asynchronously
-		MySQL.execute(this, null, q);
+		MySQL.execute(this, "add:Added " + type + " permission '" + entry + "'" + " at region (" + x + "," + y + "," + z + ")", q);
 	}
 	
 	public void remove(int x, int y, int z, String type, String entry) {
+		// Create a query to remove an entry for a region
+		Query q = MySQL.makeQuery();
+		q.setQuery("DELETE FROM regions WHERE x=?,y=?,z=?,type=?,permission=?");
+		q.add(x);
+		q.add(y);
+		q.add(z);
+		q.add(type);
+		q.add(entry);
 		
+		// Execute query asynchronously
+		MySQL.execute(this, "remove:Removed " + type + " permission '" + entry + "'" + " from region (" + x + "," + y + "," + z + ")", q);
 	}
 	
 	public void load() {
@@ -170,6 +358,15 @@ class Chunk implements IOCallback {
 			
 			// Flag this chunk as loaded
 			this.loaded = true;
+		} else {
+			String[] split = ((String)tag).split(":");
+			if(split[0].equals("add")) {
+				// Log a successful add
+				Bukkit.getLogger().info(split[1]);
+			} else if(split[0].equals("remove")) {
+				// Log a successful removal
+				Bukkit.getLogger().info(split[1]);
+			}
 		}
 	}
 }

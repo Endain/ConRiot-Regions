@@ -4,7 +4,6 @@ import java.util.HashSet;
 
 import net.conriot.sona.permissions.Permissions;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
@@ -90,7 +89,7 @@ class Region {
 		this.command.remove(perm);
 	}
 	
-	public void removeWhitelistItem(Material mat) {
+	public void removeWhitelistItem(MaterialData mat) {
 		this.whitelist.remove(mat);
 	}
 	
@@ -110,7 +109,7 @@ class Region {
 		return Permissions.hasAnyPerms(p, this.pvp);
 	}
 	
-	public boolean CanDestroy(Player p, Material m) {
+	public boolean canDestroy(Player p, MaterialData m) {
 		if(this.whitelist.contains(m))
 			return true;
 		return Permissions.hasAnyPerms(p, this.pvp);
