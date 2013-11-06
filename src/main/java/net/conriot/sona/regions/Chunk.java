@@ -13,7 +13,7 @@ import net.conriot.sona.mysql.Query;
 import net.conriot.sona.mysql.Result;
 
 class Chunk implements IOCallback {
-	private int x, y, z;
+	@Getter private int x, y, z;
 	@Getter private boolean loaded;
 	private Region[][][] regions; // x,z,y ordering
 	
