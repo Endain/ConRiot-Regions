@@ -10,7 +10,12 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
@@ -50,9 +55,11 @@ class Map implements Listener {
 			int y = event.getEntity().getLocation().getBlockY() / (16 * 4);
 			int z = event.getEntity().getLocation().getBlockZ() / (16 * 4);
 			
-			// Default behavior if chunk is loaded
+			// Behavior if chunk is loaded
 			if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
-				event.setCancelled(!(this.map[x][z][y].canPvp(event.getEntity().getLocation(), (Player)event.getEntity())));
+				if(!this.map[x][z][y].canPvp(event.getEntity().getLocation(), (Player)event.getEntity())) {
+					event.setCancelled(true);
+				}
 			} else { // Default behavior if chunk not loaded
 				event.setCancelled(true);
 			}
@@ -67,13 +74,103 @@ class Map implements Listener {
 		int y = event.getTo().getBlockY() / (16 * 4);
 		int z = event.getTo().getBlockZ() / (16 * 4);
 		
-		// Default behavior if chunk is loaded
+		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
-			if(!(this.map[x][z][y].canMove(event.getTo(), event.getPlayer()))) {
+			if(!this.map[x][z][y].canMove(event.getTo(), event.getPlayer())) {
 				event.setTo(event.getFrom());
 				event.getPlayer().setVelocity(event.getPlayer().getVelocity().multiply(-3.0).setY(1.0));
 				event.getPlayer().playEffect(event.getTo(), Effect.SMOKE, 0);
 				event.getPlayer().playSound(event.getTo(), Sound.FIREWORK_BLAST, 0.5f, 2.0f);
+			}
+		} else { // Default behavior if chunk not loaded
+			event.setCancelled(true);
+		}
+	}
+	
+	// CAN-CHAT EVENTS
+	@EventHandler
+	public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
+		int x = event.getPlayer().getLocation().getBlockX() / (16 * 4);
+		int y = event.getPlayer().getLocation().getBlockY() / (16 * 4);
+		int z = event.getPlayer().getLocation().getBlockZ() / (16 * 4);
+		
+		// Behavior if chunk is loaded
+		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+			if(!this.map[x][z][y].canChat(event.getPlayer().getLocation(), event.getPlayer())) {
+				event.setCancelled(true);
+			}
+		} else { // Default behavior if chunk not loaded
+			event.setCancelled(true);
+		}
+	}
+	
+	// CAN-BUILD EVENTS
+	@EventHandler
+	public void onPlayerPlaceBlock(BlockPlaceEvent event) {
+		int x = event.getBlock().getLocation().getBlockX() / (16 * 4);
+		int y = event.getBlock().getLocation().getBlockY() / (16 * 4);
+		int z = event.getBlock().getLocation().getBlockZ() / (16 * 4);
+		
+		// Behavior if chunk is loaded
+		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+			if(!this.map[x][z][y].canBuild(event.getBlock().getLocation(), event.getPlayer())) {
+				event.setCancelled(true);
+				event.getPlayer().damage(0.1);
+			}
+		} else { // Default behavior if chunk not loaded
+			event.setCancelled(true);
+		}
+	}
+	
+	// CAN-DESTROY EVENTS
+	@EventHandler
+	public void onPlayerDestroy(BlockBreakEvent event) {
+		int x = event.getBlock().getLocation().getBlockX() / (16 * 4);
+		int y = event.getBlock().getLocation().getBlockY() / (16 * 4);
+		int z = event.getBlock().getLocation().getBlockZ() / (16 * 4);
+		
+		// Behavior if chunk is loaded
+		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+			if(!this.map[x][z][y].canDestroy(event.getBlock().getLocation(), event.getPlayer(), event.getBlock().getState().getData())) {
+				event.setCancelled(true);
+				event.getPlayer().damage(0.1);
+			}
+		} else { // Default behavior if chunk not loaded
+			event.setCancelled(true);
+		}
+	}
+	
+	// CAN-USE EVENTS
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		if(event.getClickedBlock() != null) {
+			int x = event.getClickedBlock().getLocation().getBlockX() / (16 * 4);
+			int y = event.getClickedBlock().getLocation().getBlockY() / (16 * 4);
+			int z = event.getClickedBlock().getLocation().getBlockZ() / (16 * 4);
+			
+			// Behavior if chunk is loaded
+			if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+				if(!this.map[x][z][y].canUse(event.getClickedBlock().getLocation(), event.getPlayer())) {
+					event.setCancelled(true);
+					event.getPlayer().damage(0.1);
+				}
+			} else { // Default behavior if chunk not loaded
+				event.setCancelled(true);
+			}
+		}
+	}
+	
+	// CAN-BUILD EVENTS
+	@EventHandler
+	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+		int x = event.getPlayer().getLocation().getBlockX() / (16 * 4);
+		int y = event.getPlayer().getLocation().getBlockY() / (16 * 4);
+		int z = event.getPlayer().getLocation().getBlockZ() / (16 * 4);
+		
+		// Behavior if chunk is loaded
+		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+			if(!this.map[x][z][y].canCommand(event.getPlayer().getLocation(), event.getPlayer())) {
+				event.setCancelled(true);
 			}
 		} else { // Default behavior if chunk not loaded
 			event.setCancelled(true);

@@ -247,7 +247,7 @@ class Chunk implements IOCallback {
 		return this.regions[innerX][innerZ][innerY].canBuild(p);
 	}
 	
-	public boolean CanDestroy(Location loc, Player p, MaterialData m) {
+	public boolean canDestroy(Location loc, Player p, MaterialData m) {
 		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
