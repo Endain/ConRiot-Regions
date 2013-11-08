@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 
 class Map implements Listener {
 	private Plugin plugin;
@@ -77,10 +78,15 @@ class Map implements Listener {
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
 			if(!this.map[x][z][y].canMove(event.getTo(), event.getPlayer())) {
-				event.setTo(event.getFrom());
-				event.getPlayer().setVelocity(event.getPlayer().getVelocity().multiply(-3.0).setY(1.0));
-				event.getPlayer().playEffect(event.getTo(), Effect.SMOKE, 0);
-				event.getPlayer().playSound(event.getTo(), Sound.FIREWORK_BLAST, 0.5f, 2.0f);
+				Location l = event.getFrom().clone();
+				l.setPitch(event.getTo().getPitch());
+				l.setYaw(event.getTo().getYaw());
+				Vector v = event.getTo().toVector().subtract(event.getFrom().toVector()).multiply(-2.5).setY(0.175);
+
+				event.setTo(l);
+				event.getPlayer().setVelocity(v);
+				event.getPlayer().playEffect(event.getTo(), Effect.MOBSPAWNER_FLAMES, 0);
+				event.getPlayer().playSound(event.getTo(), Sound.FIREWORK_BLAST, 0.5f, 1.75f);
 			}
 		} else { // Default behavior if chunk not loaded
 			event.setCancelled(true);
@@ -178,6 +184,8 @@ class Map implements Listener {
 	}
 	
 	private void bufferChunksForPlayer(Player p) {
+		Bukkit.getLogger().info("Buffering chunks around " + p.getName() + " immediately!");
+		
 		// Extract the "Chunk" location of a player
 		Location loc = p.getLocation();
 		int x = loc.getBlockX() / (16 * 4);

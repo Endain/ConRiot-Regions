@@ -12,3 +12,4 @@ website: http://ConRiot.net
 description: Regions module developed for ConRiot
 author: [Endain]
 main: net.conriot.sona.regions.Regions
+depend: [CRM-MySQL, CRM-Permissions]

@@ -18,11 +18,16 @@ class Chunk implements IOCallback {
 	private Region[][][] regions; // x,z,y ordering
 	
 	public Chunk(int x, int z, int y) {
+		Bukkit.getLogger().info("Chunk created at: " + x + "," + y + ", " + z);
+		
 		this.x = x;
-		this.y = z;
-		this.z = y;
+		this.z = z;
+		this.y = y;
 		this.loaded = false;
 		this.regions = new Region[16][16][16]; // x,z,y
+		
+		// Load the data for this chunk immediately
+		load();
 	}
 	
 	public void addPvpPerm(Location loc, String perm) {
@@ -223,49 +228,63 @@ class Chunk implements IOCallback {
 		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
-		return this.regions[innerX][innerZ][innerY].canPvp(p);
+		if(this.regions[innerX][innerZ][innerY] != null)
+			return this.regions[innerX][innerZ][innerY].canPvp(p);
+		return false;
 	}
 	
 	public boolean canMove(Location loc, Player p) {
 		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
-		return this.regions[innerX][innerZ][innerY].canMove(p);
+		if(this.regions[innerX][innerZ][innerY] != null)
+			return this.regions[innerX][innerZ][innerY].canMove(p);
+		return true;
 	}
 	
 	public boolean canChat(Location loc, Player p) {
 		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
-		return this.regions[innerX][innerZ][innerY].canChat(p);
+		if(this.regions[innerX][innerZ][innerY] != null)
+			return this.regions[innerX][innerZ][innerY].canChat(p);
+		return true;
 	}
 	
 	public boolean canBuild(Location loc, Player p) {
 		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
-		return this.regions[innerX][innerZ][innerY].canBuild(p);
+		if(this.regions[innerX][innerZ][innerY] != null)
+			return this.regions[innerX][innerZ][innerY].canBuild(p);
+		return false;
 	}
 	
 	public boolean canDestroy(Location loc, Player p, MaterialData m) {
 		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
-		return this.regions[innerX][innerZ][innerY].canDestroy(p, m);
+		if(this.regions[innerX][innerZ][innerY] != null)
+			return this.regions[innerX][innerZ][innerY].canDestroy(p, m);
+		return false;
 	}
 	
 	public boolean canUse(Location loc, Player p) {
 		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
-		return this.regions[innerX][innerZ][innerY].canUse(p);
+		if(this.regions[innerX][innerZ][innerY] != null)
+			return this.regions[innerX][innerZ][innerY].canUse(p);
+		return false;
 	}
 	
 	public boolean canCommand(Location loc, Player p) {
 		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
-		return this.regions[innerX][innerZ][innerY].canCommand(p);
+		if(this.regions[innerX][innerZ][innerY] != null)
+			return this.regions[innerX][innerZ][innerY].canCommand(p);
+		return false;
 	}
 	
 	public void add(int x, int y, int z, String type, String entry) {
@@ -296,7 +315,11 @@ class Chunk implements IOCallback {
 		MySQL.execute(this, "remove:Removed " + type + " permission '" + entry + "'" + " from region (" + x + "," + y + "," + z + ")", q);
 	}
 	
-	public void load() {
+	private void load() {
+		Bukkit.getLogger().info("Attempting to load:");
+		Bukkit.getLogger().info("X: " + 16 * this.x + " to " + 16 * this.x + 15);
+		Bukkit.getLogger().info("Y: " + 16 * this.y + " to " + 16 * this.y + 15);
+		Bukkit.getLogger().info("Z: " + 16 * this.z + " to " + 16 * this.z + 15);
 		// Create a query to region data for this chunk
 		Query q = MySQL.makeQuery();
 		q.setQuery("SELECT x,y,z,type,permission FROM regions WHERE x BETWEEN ? AND ? AND y BETWEEN ? AND ? AND z BETWEEN ? AND ?");
@@ -321,6 +344,8 @@ class Chunk implements IOCallback {
 	public void complete(boolean success, Object tag, Result result) {
 		if(tag instanceof String && ((String)tag).equals("load")) {
 			while(result.next()) {
+				Bukkit.getLogger().info("Reading region data: " + result.get(0) + ", " + result.get(1) + ", " + result.get(2) + ", " + result.get(3) + ", " + result.get(4));
+				
 				// Bias the x/y/z to refer to Regions in this chunk
 				int x = (int)result.get(0) - 16 * this.x;
 				int y = (int)result.get(1) - 16 * this.y;
