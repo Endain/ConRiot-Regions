@@ -13,3 +13,6 @@ description: Regions module developed for ConRiot
 author: [Endain]
 main: net.conriot.sona.regions.Regions
 depend: [CRM-MySQL, CRM-Permissions]
+commands:
+  rg:
+    description: Region management commands

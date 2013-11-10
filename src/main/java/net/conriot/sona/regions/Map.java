@@ -52,9 +52,17 @@ class Map implements Listener {
 	@EventHandler
 	public void onPlayerTakePlayerDamage(EntityDamageByEntityEvent event) {
 		if(event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
+			// Ignore if player is OP
+			if(((Player)event.getEntity()).isOp())
+				return;
+			
 			int x = event.getEntity().getLocation().getBlockX() / (16 * 4);
 			int y = event.getEntity().getLocation().getBlockY() / (16 * 4);
 			int z = event.getEntity().getLocation().getBlockZ() / (16 * 4);
+			
+			// Ignore if out of the world
+			if(isOutsideWorld(event.getEntity().getLocation()))
+				return;
 			
 			// Behavior if chunk is loaded
 			if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -71,9 +79,17 @@ class Map implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
+		// Ignore if player is OP
+		if(event.getPlayer().isOp())
+			return;
+		
 		int x = event.getTo().getBlockX() / (16 * 4);
 		int y = event.getTo().getBlockY() / (16 * 4);
 		int z = event.getTo().getBlockZ() / (16 * 4);
+		
+		// Ignore if out of the world
+		if(isOutsideWorld(event.getTo()))
+			return;
 		
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -96,9 +112,17 @@ class Map implements Listener {
 	// CAN-CHAT EVENTS
 	@EventHandler
 	public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
+		// Ignore if player is OP
+		if(event.getPlayer().isOp())
+			return;
+		
 		int x = event.getPlayer().getLocation().getBlockX() / (16 * 4);
 		int y = event.getPlayer().getLocation().getBlockY() / (16 * 4);
 		int z = event.getPlayer().getLocation().getBlockZ() / (16 * 4);
+		
+		// Ignore if out of the world
+		if(isOutsideWorld(event.getPlayer().getLocation()))
+			return;
 		
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -113,9 +137,17 @@ class Map implements Listener {
 	// CAN-BUILD EVENTS
 	@EventHandler
 	public void onPlayerPlaceBlock(BlockPlaceEvent event) {
+		// Ignore if player is OP
+		if(event.getPlayer().isOp())
+			return;
+		
 		int x = event.getBlock().getLocation().getBlockX() / (16 * 4);
 		int y = event.getBlock().getLocation().getBlockY() / (16 * 4);
 		int z = event.getBlock().getLocation().getBlockZ() / (16 * 4);
+		
+		// Ignore if out of the world
+		if(isOutsideWorld(event.getBlock().getLocation()))
+			return;
 		
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -131,9 +163,17 @@ class Map implements Listener {
 	// CAN-DESTROY EVENTS
 	@EventHandler
 	public void onPlayerDestroy(BlockBreakEvent event) {
+		// Ignore if player is OP
+		if(event.getPlayer().isOp())
+			return;
+		
 		int x = event.getBlock().getLocation().getBlockX() / (16 * 4);
 		int y = event.getBlock().getLocation().getBlockY() / (16 * 4);
 		int z = event.getBlock().getLocation().getBlockZ() / (16 * 4);
+		
+		// Ignore if out of the world
+		if(isOutsideWorld(event.getBlock().getLocation()))
+			return;
 		
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -149,10 +189,18 @@ class Map implements Listener {
 	// CAN-USE EVENTS
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		// Ignore if player is OP
+		if(event.getPlayer().isOp())
+			return;
+		
 		if(event.getClickedBlock() != null) {
 			int x = event.getClickedBlock().getLocation().getBlockX() / (16 * 4);
 			int y = event.getClickedBlock().getLocation().getBlockY() / (16 * 4);
 			int z = event.getClickedBlock().getLocation().getBlockZ() / (16 * 4);
+			
+			// Ignore if out of the world
+			if(isOutsideWorld(event.getClickedBlock().getLocation()))
+				return;
 			
 			// Behavior if chunk is loaded
 			if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -166,12 +214,20 @@ class Map implements Listener {
 		}
 	}
 	
-	// CAN-BUILD EVENTS
+	// CAN-COMMAND EVENTS
 	@EventHandler
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+		// Ignore if player is OP
+		if(event.getPlayer().isOp())
+			return;
+		
 		int x = event.getPlayer().getLocation().getBlockX() / (16 * 4);
 		int y = event.getPlayer().getLocation().getBlockY() / (16 * 4);
 		int z = event.getPlayer().getLocation().getBlockZ() / (16 * 4);
+		
+		// Ignore if out of the world
+		if(isOutsideWorld(event.getPlayer().getLocation()))
+			return;
 		
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -181,6 +237,104 @@ class Map implements Listener {
 		} else { // Default behavior if chunk not loaded
 			event.setCancelled(true);
 		}
+	}
+	
+	public boolean addPermission(Location loc, String type, String perm) {
+		// Ignore if out of the world
+		if(isOutsideWorld(loc))
+			return false;
+		
+		int x = loc.getBlockX() / (16 * 4);
+		int y = loc.getBlockY() / (16 * 4);
+		int z = loc.getBlockZ() / (16 * 4);
+		
+		// verify the region we are trying to modify is laoded
+		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+			switch(type) {
+			case "pvp":
+				this.map[x][z][y].addPvpPerm(loc, perm);
+				break;
+			case "move":
+				this.map[x][z][y].addMovePerm(loc, perm);
+				break;
+			case "chat":
+				this.map[x][z][y].addChatPerm(loc, perm);
+				break;
+			case "build":
+				this.map[x][z][y].addBuildPerm(loc, perm);
+				break;
+			case "destroy":
+				this.map[x][z][y].addDestroyPerm(loc, perm);
+				break;
+			case "use":
+				this.map[x][z][y].addUsePerm(loc, perm);
+				break;
+			case "command":
+				this.map[x][z][y].addCommandPerm(loc, perm);
+				break;
+			default:
+				return false;
+			}
+			// Return success
+			return true;
+		}
+		
+		// Cannot add yet, return false
+		return false;
+	}
+	
+	public boolean removePermission(Location loc, String type, String perm) {
+		// Ignore if out of the world
+		if(isOutsideWorld(loc))
+			return false;
+		
+		int x = loc.getBlockX() / (16 * 4);
+		int y = loc.getBlockY() / (16 * 4);
+		int z = loc.getBlockZ() / (16 * 4);
+		
+		// verify the region we are trying to modify is laoded
+		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+			switch(type) {
+			case "pvp":
+				this.map[x][z][y].removePvpPerm(loc, perm);
+				break;
+			case "move":
+				this.map[x][z][y].removeMovePerm(loc, perm);
+				break;
+			case "chat":
+				this.map[x][z][y].removeChatPerm(loc, perm);
+				break;
+			case "build":
+				this.map[x][z][y].removeBuildPerm(loc, perm);
+				break;
+			case "destroy":
+				this.map[x][z][y].removeDestroyPerm(loc, perm);
+				break;
+			case "use":
+				this.map[x][z][y].removeUsePerm(loc, perm);
+				break;
+			case "command":
+				this.map[x][z][y].removeCommandPerm(loc, perm);
+				break;
+			default:
+				return false;
+			}
+			// Return success
+			return true;
+		}
+		
+		// Cannot add yet, return false
+		return false;
+	}
+	
+	private boolean isOutsideWorld(Location loc) {
+		if(loc.getBlockX() < 0 || loc.getBlockX() >= 2048)
+			return true;
+		if(loc.getBlockZ() < 0 || loc.getBlockZ() >= 2048)
+			return true;
+		if(loc.getBlockY() < 0 || loc.getBlockY() >= 256)
+			return true;
+		return false;
 	}
 	
 	private void bufferChunksForPlayer(Player p) {
@@ -359,6 +513,8 @@ class Map implements Listener {
 		public void run() {
 			// Perform the cache validation routine
 			validateChunks();
+			// Log the number of chunks currently loaded
+			Bukkit.getLogger().info("Currently loaded CRM-Chunks: " + loaded.size());
 			// Schedule the next cache validation
 			Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new AsynchronousValidation(), 600);
 		}

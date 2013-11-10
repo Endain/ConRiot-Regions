@@ -18,7 +18,7 @@ class Chunk implements IOCallback {
 	private Region[][][] regions; // x,z,y ordering
 	
 	public Chunk(int x, int z, int y) {
-		Bukkit.getLogger().info("Chunk created at: " + x + "," + y + ", " + z);
+		Bukkit.getLogger().info("Chunk created at: " + x + "," + y + "," + z);
 		
 		this.x = x;
 		this.z = z;
@@ -38,8 +38,10 @@ class Chunk implements IOCallback {
 		if(this.regions[innerX][innerZ][innerY] == null)
 			this.regions[innerX][innerZ][innerY] = new Region();
 		
-		this.regions[innerX][innerZ][innerY].addPvpPerm(perm);
-		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "pvp", perm);
+		if(!regions[innerX][innerZ][innerY].hasPvpPerm(perm)) {
+			this.regions[innerX][innerZ][innerY].addPvpPerm(perm);
+			add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "pvp", perm);
+		}
 	}
 	
 	public void addMovePerm(Location loc, String perm) {
@@ -50,8 +52,10 @@ class Chunk implements IOCallback {
 		if(this.regions[innerX][innerZ][innerY] == null)
 			this.regions[innerX][innerZ][innerY] = new Region();
 		
-		this.regions[innerX][innerZ][innerY].addMovePerm(perm);
-		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "move", perm);
+		if(!regions[innerX][innerZ][innerY].hasMovePerm(perm)) {
+			this.regions[innerX][innerZ][innerY].addMovePerm(perm);
+			add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "move", perm);
+		}
 	}
 	
 	public void addChatPerm(Location loc, String perm) {
@@ -59,11 +63,15 @@ class Chunk implements IOCallback {
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
 		
+		Bukkit.getLogger().info("Adding chat perm at: " + innerX + "," + innerY + "," + innerZ);
+		
 		if(this.regions[innerX][innerZ][innerY] == null)
 			this.regions[innerX][innerZ][innerY] = new Region();
 		
-		this.regions[innerX][innerZ][innerY].addChatPerm(perm);
-		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "chat", perm);
+		if(!regions[innerX][innerZ][innerY].hasChatPerm(perm)) {
+			this.regions[innerX][innerZ][innerY].addChatPerm(perm);
+			add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "chat", perm);
+		}
 	}
 	
 	public void addBuildPerm(Location loc, String perm) {
@@ -74,8 +82,10 @@ class Chunk implements IOCallback {
 		if(this.regions[innerX][innerZ][innerY] == null)
 			this.regions[innerX][innerZ][innerY] = new Region();
 		
-		this.regions[innerX][innerZ][innerY].addBuildPerm(perm);
-		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "build", perm);
+		if(!regions[innerX][innerZ][innerY].hasBuildPerm(perm)) {
+			this.regions[innerX][innerZ][innerY].addBuildPerm(perm);
+			add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "build", perm);
+		}
 	}
 	
 	public void addDestroyPerm(Location loc, String perm) {
@@ -86,8 +96,10 @@ class Chunk implements IOCallback {
 		if(this.regions[innerX][innerZ][innerY] == null)
 			this.regions[innerX][innerZ][innerY] = new Region();
 		
-		this.regions[innerX][innerZ][innerY].addDestroyPerm(perm);
-		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "destroy", perm);
+		if(!regions[innerX][innerZ][innerY].hasDestroyPerm(perm)) {
+			this.regions[innerX][innerZ][innerY].addDestroyPerm(perm);
+			add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "destroy", perm);
+		}
 	}
 	
 	public void addUsePerm(Location loc, String perm) {
@@ -98,8 +110,10 @@ class Chunk implements IOCallback {
 		if(this.regions[innerX][innerZ][innerY] == null)
 			this.regions[innerX][innerZ][innerY] = new Region();
 		
-		this.regions[innerX][innerZ][innerY].addUsePerm(perm);
-		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "use", perm);
+		if(!regions[innerX][innerZ][innerY].hasUsePerm(perm)) {
+			this.regions[innerX][innerZ][innerY].addUsePerm(perm);
+			add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "use", perm);
+		}
 	}
 	
 	public void addCommandPerm(Location loc, String perm) {
@@ -110,8 +124,10 @@ class Chunk implements IOCallback {
 		if(this.regions[innerX][innerZ][innerY] == null)
 			this.regions[innerX][innerZ][innerY] = new Region();
 		
-		this.regions[innerX][innerZ][innerY].addCommandPerm(perm);
-		add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "command", perm);
+		if(!regions[innerX][innerZ][innerY].hasCommandPerm(perm)) {
+			this.regions[innerX][innerZ][innerY].addCommandPerm(perm);
+			add(loc.getBlockX() / 4, loc.getBlockY() / 4, loc.getBlockZ() / 4, "command", perm);
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -237,6 +253,9 @@ class Chunk implements IOCallback {
 		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
+		
+		Bukkit.getLogger().info("Checking move for: " + innerX + "," + innerY + "," + innerZ);
+		
 		if(this.regions[innerX][innerZ][innerY] != null)
 			return this.regions[innerX][innerZ][innerY].canMove(p);
 		return true;
@@ -290,12 +309,14 @@ class Chunk implements IOCallback {
 	public void add(int x, int y, int z, String type, String entry) {
 		// Create a query to add an entry for a region
 		Query q = MySQL.makeQuery();
-		q.setQuery("INSERT IGNORE INTO regions (x,y,z,type,permission) VALUES ?,?,?,?,?");
+		q.setQuery("INSERT INTO regions (x,y,z,type,permission) VALUES (?,?,?,?,?)");
 		q.add(x);
 		q.add(y);
 		q.add(z);
 		q.add(type);
 		q.add(entry);
+		
+		Bukkit.getLogger().info("Attempting to add to db: " + x + "," + y + "," + z + "," + type + "," + entry);
 		
 		// Execute query asynchronously
 		MySQL.execute(this, "add:Added " + type + " permission '" + entry + "'" + " at region (" + x + "," + y + "," + z + ")", q);
@@ -304,12 +325,14 @@ class Chunk implements IOCallback {
 	public void remove(int x, int y, int z, String type, String entry) {
 		// Create a query to remove an entry for a region
 		Query q = MySQL.makeQuery();
-		q.setQuery("DELETE FROM regions WHERE x=?,y=?,z=?,type=?,permission=?");
+		q.setQuery("DELETE FROM regions WHERE x=? AND y=? AND z=? AND type=? AND permission=?");
 		q.add(x);
 		q.add(y);
 		q.add(z);
 		q.add(type);
 		q.add(entry);
+		
+		Bukkit.getLogger().info("Attempting to remove from db: " + x + "," + y + "," + z + "," + type + "," + entry);
 		
 		// Execute query asynchronously
 		MySQL.execute(this, "remove:Removed " + type + " permission '" + entry + "'" + " from region (" + x + "," + y + "," + z + ")", q);
@@ -317,9 +340,9 @@ class Chunk implements IOCallback {
 	
 	private void load() {
 		Bukkit.getLogger().info("Attempting to load:");
-		Bukkit.getLogger().info("X: " + 16 * this.x + " to " + 16 * this.x + 15);
-		Bukkit.getLogger().info("Y: " + 16 * this.y + " to " + 16 * this.y + 15);
-		Bukkit.getLogger().info("Z: " + 16 * this.z + " to " + 16 * this.z + 15);
+		Bukkit.getLogger().info("X: " + (16 * this.x) + " to " + (16 * this.x + 15));
+		Bukkit.getLogger().info("Y: " + (16 * this.y) + " to " + (16 * this.y + 15));
+		Bukkit.getLogger().info("Z: " + (16 * this.z) + " to " + (16 * this.z + 15));
 		// Create a query to region data for this chunk
 		Query q = MySQL.makeQuery();
 		q.setQuery("SELECT x,y,z,type,permission FROM regions WHERE x BETWEEN ? AND ? AND y BETWEEN ? AND ? AND z BETWEEN ? AND ?");

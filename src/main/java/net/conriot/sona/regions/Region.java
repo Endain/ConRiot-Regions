@@ -98,28 +98,56 @@ class Region {
 	}
 	
 	public boolean canMove(Player p) {
-		return Permissions.hasAnyPerms(p, this.pvp);
+		return Permissions.hasAnyPerms(p, this.move);
 	}
 	
 	public boolean canChat(Player p) {
-		return Permissions.hasAnyPerms(p, this.pvp);
+		return Permissions.hasAnyPerms(p, this.chat);
 	}
 	
 	public boolean canBuild(Player p) {
-		return Permissions.hasAnyPerms(p, this.pvp);
+		return Permissions.hasAnyPerms(p, this.build);
 	}
 	
 	public boolean canDestroy(Player p, MaterialData m) {
 		if(this.whitelist.contains(m))
 			return true;
-		return Permissions.hasAnyPerms(p, this.pvp);
+		return Permissions.hasAnyPerms(p, this.destroy);
 	}
 	
 	public boolean canUse(Player p) {
-		return Permissions.hasAnyPerms(p, this.pvp);
+		return Permissions.hasAnyPerms(p, this.use);
 	}
 	
 	public boolean canCommand(Player p) {
-		return Permissions.hasAnyPerms(p, this.pvp);
+		return Permissions.hasAnyPerms(p, this.command);
+	}
+	
+	public boolean hasPvpPerm(String perm) {
+		return this.pvp.contains(perm);
+	}
+	
+	public boolean hasMovePerm(String perm) {
+		return this.move.contains(perm);
+	}
+	
+	public boolean hasChatPerm(String perm) {
+		return this.chat.contains(perm);
+	}
+	
+	public boolean hasBuildPerm(String perm) {
+		return this.build.contains(perm);
+	}
+	
+	public boolean hasDestroyPerm(String perm) {
+		return this.destroy.contains(perm);
+	}
+	
+	public boolean hasUsePerm(String perm) {
+		return this.use.contains(perm);
+	}
+	
+	public boolean hasCommandPerm(String perm) {
+		return this.command.contains(perm);
 	}
 }
