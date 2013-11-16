@@ -12,6 +12,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 
 class Commands implements CommandExecutor {
 	private Map map;
@@ -27,7 +28,6 @@ class Commands implements CommandExecutor {
 				highlightChunk(sender);
 			} else {
 				sender.sendMessage(ChatColor.RED + "Could not add permission!");
-				highlightChunk(sender);
 			}
 		}
 	}
@@ -38,8 +38,47 @@ class Commands implements CommandExecutor {
 				sender.sendMessage(ChatColor.GREEN + "Removed permisision '" + args[2] + "' from group '" + args[1] + "'!");
 				highlightChunk(sender);
 			} else {
-				sender.sendMessage(ChatColor.RED + "Could not add permission!");
-				highlightChunk(sender);
+				sender.sendMessage(ChatColor.RED + "Could not remove permission!");
+			}
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void whitelist(Player sender, String[] args) {
+		if(args.length > 2) {
+			String[] split = args[2].split(":");
+			if(split.length == 2) {
+				int id, data;
+				
+				try {
+					id= Integer.parseInt(split[0]);
+					data = Integer.parseInt(split[1]);
+					MaterialData mat = new MaterialData(id, (byte) data);
+					
+					switch(args[1].toLowerCase()) {
+					case "add":
+						if(this.map.addWhitelist(sender.getLocation(), mat)) {
+							sender.sendMessage(ChatColor.GREEN + "Added material '" + id + ":" + data + "' to whitelist!");
+							highlightChunk(sender);
+						} else {
+							sender.sendMessage(ChatColor.RED + "Could not add to whitelist!");
+						}
+						break;
+					case "remove":
+						if(this.map.removeWhitelist(sender.getLocation(), mat)) {
+							sender.sendMessage(ChatColor.GREEN + "Removed material '" + id + ":" + data + "' from whitelist!");
+							highlightChunk(sender);
+						} else {
+							sender.sendMessage(ChatColor.RED + "Could not remove from whitelist!");
+						}
+						break;
+					default:
+						sender.sendMessage(ChatColor.RED + "Must specify either 'add' or 'remove'!");
+					}
+				} catch(Exception e) {
+					// Notify of incorrect material
+					sender.sendMessage(ChatColor.RED + "Invalid material! (Must be of format id:data)");
+				}
 			}
 		}
 	}
@@ -118,6 +157,9 @@ class Commands implements CommandExecutor {
 				break;
 			case "list":
 				list((Player)sender, args);
+				break;
+			case "whitelist":
+				whitelist((Player)sender, args);
 				break;
 			}
 		}

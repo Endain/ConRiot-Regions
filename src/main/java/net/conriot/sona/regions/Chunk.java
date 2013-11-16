@@ -18,8 +18,6 @@ class Chunk implements IOCallback {
 	private Region[][][] regions; // x,z,y ordering
 	
 	public Chunk(int x, int z, int y) {
-		Bukkit.getLogger().info("Chunk created at: " + x + "," + y + "," + z);
-		
 		this.x = x;
 		this.z = z;
 		this.y = y;
@@ -62,8 +60,6 @@ class Chunk implements IOCallback {
 		int innerX = (loc.getBlockX() - (this.x * 16 * 4)) / 4;
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
-		
-		Bukkit.getLogger().info("Adding chat perm at: " + innerX + "," + innerY + "," + innerZ);
 		
 		if(this.regions[innerX][innerZ][innerY] == null)
 			this.regions[innerX][innerZ][innerY] = new Region();
@@ -254,8 +250,6 @@ class Chunk implements IOCallback {
 		int innerY = (loc.getBlockY() - (this.y * 16 * 4)) / 4;
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
 		
-		Bukkit.getLogger().info("Checking move for: " + innerX + "," + innerY + "," + innerZ);
-		
 		if(this.regions[innerX][innerZ][innerY] != null)
 			return this.regions[innerX][innerZ][innerY].canMove(p);
 		return true;
@@ -316,8 +310,6 @@ class Chunk implements IOCallback {
 		q.add(type);
 		q.add(entry);
 		
-		Bukkit.getLogger().info("Attempting to add to db: " + x + "," + y + "," + z + "," + type + "," + entry);
-		
 		// Execute query asynchronously
 		MySQL.execute(this, "add:Added " + type + " permission '" + entry + "'" + " at region (" + x + "," + y + "," + z + ")", q);
 	}
@@ -332,17 +324,11 @@ class Chunk implements IOCallback {
 		q.add(type);
 		q.add(entry);
 		
-		Bukkit.getLogger().info("Attempting to remove from db: " + x + "," + y + "," + z + "," + type + "," + entry);
-		
 		// Execute query asynchronously
 		MySQL.execute(this, "remove:Removed " + type + " permission '" + entry + "'" + " from region (" + x + "," + y + "," + z + ")", q);
 	}
 	
 	private void load() {
-		Bukkit.getLogger().info("Attempting to load:");
-		Bukkit.getLogger().info("X: " + (16 * this.x) + " to " + (16 * this.x + 15));
-		Bukkit.getLogger().info("Y: " + (16 * this.y) + " to " + (16 * this.y + 15));
-		Bukkit.getLogger().info("Z: " + (16 * this.z) + " to " + (16 * this.z + 15));
 		// Create a query to region data for this chunk
 		Query q = MySQL.makeQuery();
 		q.setQuery("SELECT x,y,z,type,permission FROM regions WHERE x BETWEEN ? AND ? AND y BETWEEN ? AND ? AND z BETWEEN ? AND ?");
@@ -367,8 +353,6 @@ class Chunk implements IOCallback {
 	public void complete(boolean success, Object tag, Result result) {
 		if(tag instanceof String && ((String)tag).equals("load")) {
 			while(result.next()) {
-				Bukkit.getLogger().info("Reading region data: " + result.get(0) + ", " + result.get(1) + ", " + result.get(2) + ", " + result.get(3) + ", " + result.get(4));
-				
 				// Bias the x/y/z to refer to Regions in this chunk
 				int x = (int)result.get(0) - 16 * this.x;
 				int y = (int)result.get(1) - 16 * this.y;
@@ -393,13 +377,13 @@ class Chunk implements IOCallback {
 					this.regions[x][z][y].addUsePerm((String)result.get(4));
 				else if(((String)result.get(3)).equals("command"))
 					this.regions[x][z][y].addCommandPerm((String)result.get(4));
-				else if(((String)result.get(3)).equals("move")) {
+				else if(((String)result.get(3)).equals("whitelist")) {
 					String[] split = ((String)result.get(4)).split(":");
 					@SuppressWarnings("deprecation")
 					MaterialData mat = new MaterialData(Integer.parseInt(split[0]), Byte.parseByte(split[1]));
 					this.regions[x][z][y].addWhitelistItem(mat);
 				} else {
-					Bukkit.getLogger().warning("Could not parse row result for Region at " + x + this.x * 16 + "," + z + this.z * 16 + "," + y + this.y * 16 + " (x,z,y)");
+					Bukkit.getLogger().warning("Could not parse row result for Region at " + (x + this.x * 16) + "," + (z + this.z * 16) + "," + (y + this.y * 16) + " (x,z,y)");
 					Bukkit.getLogger().warning("Unknown type for row: \"" + (String)result.get(3) + "\"");
 				}
 			}

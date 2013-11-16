@@ -6,10 +6,13 @@ import java.util.LinkedList;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -18,6 +21,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
@@ -52,22 +56,31 @@ class Map implements Listener {
 	@EventHandler
 	public void onPlayerTakePlayerDamage(EntityDamageByEntityEvent event) {
 		if(event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
-			// Ignore if player is OP
-			if(((Player)event.getEntity()).isOp())
+			// Ignore if damager is OP, they can always hit people
+			if(((Player)event.getDamager()).isOp())
 				return;
-			
-			int x = event.getEntity().getLocation().getBlockX() / (16 * 4);
-			int y = event.getEntity().getLocation().getBlockY() / (16 * 4);
-			int z = event.getEntity().getLocation().getBlockZ() / (16 * 4);
 			
 			// Ignore if out of the world
 			if(isOutsideWorld(event.getEntity().getLocation()))
 				return;
 			
+			// Get damaged player's coords
+			int x = event.getEntity().getLocation().getBlockX() / (16 * 4);
+			int y = event.getEntity().getLocation().getBlockY() / (16 * 4);
+			int z = event.getEntity().getLocation().getBlockZ() / (16 * 4);
+			// Get attacking player's coords
+			int x2 = event.getEntity().getLocation().getBlockX() / (16 * 4);
+			int y2 = event.getEntity().getLocation().getBlockY() / (16 * 4);
+			int z2 = event.getEntity().getLocation().getBlockZ() / (16 * 4);
+			
 			// Behavior if chunk is loaded
 			if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+				// Check if player in pvp zone
 				if(!this.map[x][z][y].canPvp(event.getEntity().getLocation(), (Player)event.getEntity())) {
-					event.setCancelled(true);
+					// Check if attacker in pvp zone
+					if(!this.map[x2][z2][y2].canPvp(event.getDamager().getLocation(), (Player)event.getDamager())) {
+						event.setCancelled(true);
+					}
 				}
 			} else { // Default behavior if chunk not loaded
 				event.setCancelled(true);
@@ -83,13 +96,13 @@ class Map implements Listener {
 		if(event.getPlayer().isOp())
 			return;
 		
-		int x = event.getTo().getBlockX() / (16 * 4);
-		int y = event.getTo().getBlockY() / (16 * 4);
-		int z = event.getTo().getBlockZ() / (16 * 4);
-		
 		// Ignore if out of the world
 		if(isOutsideWorld(event.getTo()))
 			return;
+				
+		int x = event.getTo().getBlockX() / (16 * 4);
+		int y = event.getTo().getBlockY() / (16 * 4);
+		int z = event.getTo().getBlockZ() / (16 * 4);
 		
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -116,13 +129,13 @@ class Map implements Listener {
 		if(event.getPlayer().isOp())
 			return;
 		
-		int x = event.getPlayer().getLocation().getBlockX() / (16 * 4);
-		int y = event.getPlayer().getLocation().getBlockY() / (16 * 4);
-		int z = event.getPlayer().getLocation().getBlockZ() / (16 * 4);
-		
 		// Ignore if out of the world
 		if(isOutsideWorld(event.getPlayer().getLocation()))
 			return;
+		
+		int x = event.getPlayer().getLocation().getBlockX() / (16 * 4);
+		int y = event.getPlayer().getLocation().getBlockY() / (16 * 4);
+		int z = event.getPlayer().getLocation().getBlockZ() / (16 * 4);
 		
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -141,13 +154,13 @@ class Map implements Listener {
 		if(event.getPlayer().isOp())
 			return;
 		
-		int x = event.getBlock().getLocation().getBlockX() / (16 * 4);
-		int y = event.getBlock().getLocation().getBlockY() / (16 * 4);
-		int z = event.getBlock().getLocation().getBlockZ() / (16 * 4);
-		
 		// Ignore if out of the world
 		if(isOutsideWorld(event.getBlock().getLocation()))
 			return;
+		
+		int x = event.getBlock().getLocation().getBlockX() / (16 * 4);
+		int y = event.getBlock().getLocation().getBlockY() / (16 * 4);
+		int z = event.getBlock().getLocation().getBlockZ() / (16 * 4);
 		
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -167,13 +180,13 @@ class Map implements Listener {
 		if(event.getPlayer().isOp())
 			return;
 		
-		int x = event.getBlock().getLocation().getBlockX() / (16 * 4);
-		int y = event.getBlock().getLocation().getBlockY() / (16 * 4);
-		int z = event.getBlock().getLocation().getBlockZ() / (16 * 4);
-		
 		// Ignore if out of the world
 		if(isOutsideWorld(event.getBlock().getLocation()))
 			return;
+		
+		int x = event.getBlock().getLocation().getBlockX() / (16 * 4);
+		int y = event.getBlock().getLocation().getBlockY() / (16 * 4);
+		int z = event.getBlock().getLocation().getBlockZ() / (16 * 4);
 		
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -193,14 +206,32 @@ class Map implements Listener {
 		if(event.getPlayer().isOp())
 			return;
 		
-		if(event.getClickedBlock() != null) {
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
+			// Ignore if out of the world or not the correct type of block
+			if(isOutsideWorld(event.getClickedBlock().getLocation()) || !isInteractableBlock(event.getClickedBlock()))
+				return;
+			
 			int x = event.getClickedBlock().getLocation().getBlockX() / (16 * 4);
 			int y = event.getClickedBlock().getLocation().getBlockY() / (16 * 4);
 			int z = event.getClickedBlock().getLocation().getBlockZ() / (16 * 4);
 			
-			// Ignore if out of the world
-			if(isOutsideWorld(event.getClickedBlock().getLocation()))
+			// Behavior if chunk is loaded
+			if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+				if(!this.map[x][z][y].canUse(event.getClickedBlock().getLocation(), event.getPlayer())) {
+					event.setCancelled(true);
+					event.getPlayer().damage(0.1);
+				}
+			} else { // Default behavior if chunk not loaded
+				event.setCancelled(true);
+			}
+		} else if(event.getAction() == Action.PHYSICAL && event.getClickedBlock() != null) {
+			// Ignore if out of the world or not the correct type of block
+			if(isOutsideWorld(event.getClickedBlock().getLocation()) || !isInteractableBlock(event.getClickedBlock()))
 				return;
+			
+			int x = event.getClickedBlock().getLocation().getBlockX() / (16 * 4);
+			int y = event.getClickedBlock().getLocation().getBlockY() / (16 * 4);
+			int z = event.getClickedBlock().getLocation().getBlockZ() / (16 * 4);
 			
 			// Behavior if chunk is loaded
 			if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -214,6 +245,21 @@ class Map implements Listener {
 		}
 	}
 	
+	private boolean isInteractableBlock(Block clicked) {
+		Material m = clicked.getType();
+		switch(m) {
+		case STONE_PLATE:
+		case WOOD_PLATE:
+		case TRIPWIRE:
+		case LEVER:
+		case STONE_BUTTON:
+		case WOOD_BUTTON:
+			return true;
+		default:
+			return false;
+		}
+	}
+	
 	// CAN-COMMAND EVENTS
 	@EventHandler
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
@@ -221,13 +267,13 @@ class Map implements Listener {
 		if(event.getPlayer().isOp())
 			return;
 		
-		int x = event.getPlayer().getLocation().getBlockX() / (16 * 4);
-		int y = event.getPlayer().getLocation().getBlockY() / (16 * 4);
-		int z = event.getPlayer().getLocation().getBlockZ() / (16 * 4);
-		
 		// Ignore if out of the world
 		if(isOutsideWorld(event.getPlayer().getLocation()))
 			return;
+		
+		int x = event.getPlayer().getLocation().getBlockX() / (16 * 4);
+		int y = event.getPlayer().getLocation().getBlockY() / (16 * 4);
+		int z = event.getPlayer().getLocation().getBlockZ() / (16 * 4);
 		
 		// Behavior if chunk is loaded
 		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
@@ -323,7 +369,47 @@ class Map implements Listener {
 			return true;
 		}
 		
-		// Cannot add yet, return false
+		// Cannot remove yet, return false
+		return false;
+	}
+	
+	public boolean addWhitelist(Location loc, MaterialData mat) {
+		// Ignore if out of the world
+		if(isOutsideWorld(loc))
+			return false;
+		
+		int x = loc.getBlockX() / (16 * 4);
+		int y = loc.getBlockY() / (16 * 4);
+		int z = loc.getBlockZ() / (16 * 4);
+		
+		// verify the region we are trying to modify is laoded
+		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+			this.map[x][z][y].addWhitelistItem(loc, mat);
+			// Return success
+			return true;
+		}
+		
+		// Cannot remove yet, return false
+		return false;
+	}
+	
+	public boolean removeWhitelist(Location loc, MaterialData mat) {
+		// Ignore if out of the world
+		if(isOutsideWorld(loc))
+			return false;
+		
+		int x = loc.getBlockX() / (16 * 4);
+		int y = loc.getBlockY() / (16 * 4);
+		int z = loc.getBlockZ() / (16 * 4);
+		
+		// verify the region we are trying to modify is laoded
+		if(this.map[x][z][y] != null && this.map[x][z][y].isLoaded()) {
+			this.map[x][z][y].removeWhitelistItem(loc, mat);
+			// Return success
+			return true;
+		}
+		
+		// Cannot remove yet, return false
 		return false;
 	}
 	

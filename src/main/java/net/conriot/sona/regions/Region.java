@@ -98,11 +98,15 @@ class Region {
 	}
 	
 	public boolean canMove(Player p) {
-		return Permissions.hasAnyPerms(p, this.move);
+		if(this.move.size() > 0)
+			return Permissions.hasAnyPerms(p, this.move);
+		return true; // Default to true of no perms
 	}
 	
 	public boolean canChat(Player p) {
-		return Permissions.hasAnyPerms(p, this.chat);
+		if(this.chat.size() > 0)
+			return Permissions.hasAnyPerms(p, this.chat);
+		return true; // Default to true if no perms
 	}
 	
 	public boolean canBuild(Player p) {
@@ -120,7 +124,9 @@ class Region {
 	}
 	
 	public boolean canCommand(Player p) {
-		return Permissions.hasAnyPerms(p, this.command);
+		if(this.command.size() > 0)
+			return Permissions.hasAnyPerms(p, this.command);
+		return true; // Default to true if no perms
 	}
 	
 	public boolean hasPvpPerm(String perm) {
