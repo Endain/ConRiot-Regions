@@ -297,7 +297,7 @@ class Chunk implements IOCallback {
 		int innerZ = (loc.getBlockZ() - (this.z * 16 * 4)) / 4;
 		if(this.regions[innerX][innerZ][innerY] != null)
 			return this.regions[innerX][innerZ][innerY].canCommand(p);
-		return false;
+		return true;
 	}
 	
 	public void add(int x, int y, int z, String type, String entry) {
